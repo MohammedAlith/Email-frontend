@@ -1,7 +1,7 @@
 body {
   margin: 0;
   padding: 0;
-  background-image: url("https://www.shutterstock.com/image-photo/email-marketing-newsletter-conceptcontact-us-260nw-2154462497.jpg");                    ;
+  background-image: url('./emailBG.png');                    ;
   background-size: cover;     
   background-position: center; 
   background-repeat: no-repeat;
