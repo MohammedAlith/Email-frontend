@@ -60,7 +60,7 @@ const GmailStyleEmailForm: React.FC = () => {
 
   return (
     <div className="max-w-3xl mx-auto m-10 border border-gray-200 rounded-2xl shadow-xl bg-white overflow-hidden">
-  {/* Header */}
+ 
   <div className="flex items-center justify-between border-b border-gray-200 px-6 py-3 bg-gray-50 text-xl">
     <h2 className="font-semibold text-gray-800 flex gap-1"><span className="text-red-500 text-3xl"><MailIcon/></span>New Message</h2>
     <button
@@ -72,9 +72,9 @@ const GmailStyleEmailForm: React.FC = () => {
     </button>
   </div>
 
-  {/* Form */}
+
   <form onSubmit={handleSubmit} className="p-6 space-y-5">
-    {/* To */}
+   
     <div className="flex items-center gap-3">
       <span className="font-medium text-gray-700 w-20">To:</span>
       <input
@@ -87,7 +87,7 @@ const GmailStyleEmailForm: React.FC = () => {
       />
     </div>
 
-    {/* Subject */}
+    
     <div className="flex items-center gap-3">
       <span className="font-medium text-gray-700 w-20">Subject:</span>
       <input
@@ -100,16 +100,16 @@ const GmailStyleEmailForm: React.FC = () => {
       />
     </div>
 
-    {/* Message */}
+    
     <textarea
-      placeholder="Compose your email..."
+      placeholder="Compose your message..."
       value={text}
       onChange={(e) => setText(e.target.value)}
       rows={5}
       className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none overflow-y-auto  transition"
     />
 
-    {/* File Upload */}
+   
     <div className="flex items-start gap-3">
       <label className="flex items-center gap-2 cursor-pointer text-gray-600 hover:text-blue-600 transition">
         <PaperClipIcon size={20} /> 
@@ -133,7 +133,7 @@ const GmailStyleEmailForm: React.FC = () => {
       )}
     </div>
 
-    {/* Footer */}
+   
     <div className="flex justify-between items-center pt-4 border-t border-gray-200">
       <button
         type="submit"
