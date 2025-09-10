@@ -24,7 +24,7 @@ const GmailStyleEmailForm: React.FC = () => {
       formData.append("text", text);
       files.forEach((file) => formData.append("attachments", file));
 
-      const res = await fetch("http://localhost:8000/send-email", { method: "POST", body: formData });
+      const res = await fetch("https://emai-node.onrender.com/send-email", { method: "POST", body: formData });
       const data: { success: boolean } = await res.json();
 
       if (data.success) {
