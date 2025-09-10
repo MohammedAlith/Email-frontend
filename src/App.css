@@ -1,0 +1,10 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-image: url("https://www.shutterstock.com/image-photo/email-marketing-newsletter-conceptcontact-us-260nw-2154462497.jpg");                    ;
+  background-size: cover;     
+  background-position: center; 
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  font-family: 'Inter', sans-serif;
+}
