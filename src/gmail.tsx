@@ -1,14 +1,14 @@
 import React, { useState, FormEvent, ChangeEvent, ElementType, useRef } from "react";
 import { AiOutlinePaperClip, AiOutlineSend } from "react-icons/ai";
 import { IoIosMailUnread } from "react-icons/io";
-import { IoClose } from "react-icons/io5";
-import { IoAttach } from "react-icons/io5";
+import { IoClose, IoAttach } from "react-icons/io5";
+import ImportExcel from './import';
 
 const PaperClipIcon = AiOutlinePaperClip as ElementType;
 const SendIcon = AiOutlineSend as ElementType;
 const MailIcon = IoIosMailUnread as ElementType;
-const CloseIcon=IoClose as ElementType;
-const AttachIcon=IoAttach as ElementType;
+const CloseIcon = IoClose as ElementType;
+const AttachIcon = IoAttach as ElementType;
 
 const GmailStyleEmailForm: React.FC = () => {
   const [to, setTo] = useState("");
@@ -18,6 +18,7 @@ const GmailStyleEmailForm: React.FC = () => {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error">("success");
   const [loading, setLoading] = useState(false);
+  const [showImport, setShowImport] = useState(false); // For ImportExcel popup
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -30,7 +31,10 @@ const GmailStyleEmailForm: React.FC = () => {
       formData.append("text", text);
       files.forEach((file) => formData.append("attachments", file));
 
-      const res = await fetch("https://emai-node.onrender.com/send-email", { method: "POST", body: formData });
+      const res = await fetch("https://emai-node.onrender.com/send-email", {
+        method: "POST",
+        body: formData,
+      });
       const data: { success: boolean } = await res.json();
 
       if (data.success) {
@@ -59,108 +63,121 @@ const GmailStyleEmailForm: React.FC = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto m-10 border border-gray-200 rounded-2xl shadow-xl bg-white overflow-hidden">
- 
-  <div className="flex items-center justify-between border-b border-gray-200 px-6 py-3 bg-gray-50 text-xl">
-    <h2 className="font-semibold text-gray-800 flex gap-1"><span className="text-red-500 text-3xl"><MailIcon/></span>New Message</h2>
-    <button
-      type="button"
-      className="text-gray-400 hover:text-red-500 transition text-3xl"
-      onClick={() => setText("")}
-    >
-    <CloseIcon/>
-    </button>
-  </div>
+    <div className="flex justify-center items-center h-screen">
+      <div className="border border-gray-200 rounded-2xl shadow-xl bg-white overflow-hidden">
 
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-3 bg-gray-50 text-xl">
+          <h2 className="font-semibold text-gray-800 flex gap-1">
+            <span className="text-red-500 text-3xl"><MailIcon /></span>
+            New Message
+          </h2>
+          
+        </div>
 
-  <form onSubmit={handleSubmit} className="p-6 space-y-5">
-   
-    <div className="flex items-center gap-3">
-      <span className="font-medium text-gray-700 w-20">To:</span>
-      <input
-        type="email"
-        placeholder="Recipient"
-        value={to}
-        onChange={(e) => setTo(e.target.value)}
-        required
-        className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
-      />
-    </div>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-5">
+          {/* To */}
+          <div className="flex items-center gap-3">
+            <span className="font-medium text-gray-700 w-20">To:</span>
+            <input
+              type="email"
+              placeholder="Recipient"
+              value={to}
+              onChange={(e) => setTo(e.target.value)}
+              className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+            />
+          </div>
 
-    
-    <div className="flex items-center gap-3">
-      <span className="font-medium text-gray-700 w-20">Subject:</span>
-      <input
-        type="text"
-        placeholder="Subject"
-        value={subject}
-        onChange={(e) => setSubject(e.target.value)}
-        required
-        className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
-      />
-    </div>
+          {/* Subject */}
+          <div className="flex items-center gap-3">
+            <span className="font-medium text-gray-700 w-20">Subject:</span>
+            <input
+              type="text"
+              placeholder="Subject"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+            />
+          </div>
 
-    
-    <textarea
-      placeholder="Compose your message..."
-      value={text}
-      onChange={(e) => setText(e.target.value)}
-      rows={5}
-      className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none overflow-y-auto  transition"
-    />
+          {/* Message */}
+          <textarea
+            placeholder="Compose your message..."
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            rows={3}
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none overflow-y-auto transition"
+          />
 
-   
-    <div className="flex items-start gap-3">
-      <label className="flex items-center gap-2 cursor-pointer text-gray-600 hover:text-blue-600 transition">
-        <PaperClipIcon size={20} /> 
-        <span className="text-sm">Attach files</span>
-        <input
-          ref={fileInputRef}
-          type="file"
-          multiple
-          onChange={handleFileChange}
-          className="hidden"
-        />
-      </label>
-      {files.length > 0 && (
-        <ul className="ml-4 space-y-1 text-xl text-gray-600 ">
-          {files.map((file, idx) => (
-            <li key={idx} className="flex items-center gap-2">
-            <AttachIcon/> {file.name}
-            </li>
-          ))}
-        </ul>
+          {/* Attachments */}
+          <div className="flex items-start gap-3">
+            <label className="flex items-center gap-2 cursor-pointer text-gray-600 hover:text-blue-600 transition">
+              <PaperClipIcon size={20} />
+              <span className="text-sm">Attach files</span>
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </label>
+            {files.length > 0 && (
+              <ul className="ml-4 space-y-1 text-xl text-gray-600">
+                {files.map((file, idx) => (
+                  <li key={idx} className="flex items-center gap-2">
+                    <AttachIcon /> {file.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+            {/* Send button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 shadow-md transition"
+            >
+              {loading ? "Sending..." : (<><SendIcon size={18} /> Send</>)}
+            </button>
+
+            {message && (
+              <p className={`text-sm ${messageType === "success" ? "text-green-600" : "text-red-600"}`}>
+                {message}
+              </p>
+            )}
+
+            {/* Import Excel button */}
+            <button
+              type="button"
+              onClick={() => setShowImport(true)}
+              className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 shadow-md"
+            >
+              Import 
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* ImportExcel Popup */}
+      {showImport && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+          <div className="bg-white p-2 rounded-2xl shadow-xl w-fit relative">
+            <button
+              onClick={() => setShowImport(false)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-2xl"
+            >
+              <CloseIcon/>
+            </button>
+            <ImportExcel />
+          </div>
+        </div>
       )}
     </div>
-
-   
-    <div className="flex justify-between items-center pt-4 border-t border-gray-200">
-      <button
-        type="submit"
-        disabled={loading}
-        className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 shadow-md transition"
-      >
-        {loading ? (
-          "Sending..."
-        ) : (
-          <>
-            <SendIcon size={18} /> Send
-          </>
-        )}
-      </button>
-      {message && (
-        <p
-          className={`text-sm ${
-            messageType === "success" ? "text-green-600" : "text-red-600"
-          }`}
-        >
-          {message}
-        </p>
-      )}
-    </div>
-  </form>
-</div>
-
   );
 };
 
