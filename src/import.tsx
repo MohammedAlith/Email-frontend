@@ -15,7 +15,7 @@ const ImportExcel: React.FC = () => {
 
   const handleSend = async () => {
     if (!file) {
-      setMessage(" Please upload a file first.");
+      setMessage("Please upload a file first.");
       return;
     }
 
@@ -84,7 +84,7 @@ const ImportExcel: React.FC = () => {
         </div>
       )}
 
-      {message && <p className="mt-3 text-center">{message}</p>}
+      {message && <p className="mt-3 text-center text-green-500 text-bold text-xl">{message}</p>}
     </div>
   );
 };
