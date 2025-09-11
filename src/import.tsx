@@ -26,7 +26,7 @@ const ImportExcel: React.FC = () => {
     formData.append("file", file);
 
     try {
-      const res = await fetch("https://email-frontend-two-eta.vercel.app/import-excel", {
+      const res = await fetch("https://emai-node.onrender.com/import-excel", {
         method: "POST",
         body: formData,
       });
