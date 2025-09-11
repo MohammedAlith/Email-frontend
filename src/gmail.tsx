@@ -1,8 +1,15 @@
-import React, { useState, FormEvent, ChangeEvent, ElementType, useRef } from "react";
+import React, {
+  useState,
+  FormEvent,
+  ChangeEvent,
+  ElementType,
+  useRef,
+} from "react";
 import { AiOutlinePaperClip, AiOutlineSend } from "react-icons/ai";
 import { IoIosMailUnread } from "react-icons/io";
 import { IoClose, IoAttach } from "react-icons/io5";
-import ImportExcel from './import';
+import ImportExcel from "./import";
+import EmailList from "./email";
 
 const PaperClipIcon = AiOutlinePaperClip as ElementType;
 const SendIcon = AiOutlineSend as ElementType;
@@ -18,7 +25,11 @@ const GmailStyleEmailForm: React.FC = () => {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error">("success");
   const [loading, setLoading] = useState(false);
-  const [showImport, setShowImport] = useState(false); // For ImportExcel popup
+
+  // 🔥 State for popups / sidebar
+  const [showImport, setShowImport] = useState(false);
+  const [showEmails, setShowEmails] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -63,16 +74,17 @@ const GmailStyleEmailForm: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="border border-gray-200 rounded-2xl shadow-xl bg-white overflow-hidden">
-
+    <div className="flex justify-center items-center h-screen relative">
+      {/* Main Compose Box */}
+      <div className="border border-gray-200 rounded-2xl shadow-xl bg-white overflow-hidden z-10">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-200 px-6 py-3 bg-gray-50 text-xl">
           <h2 className="font-semibold text-gray-800 flex gap-1">
-            <span className="text-red-500 text-3xl"><MailIcon /></span>
+            <span className="text-red-500 text-3xl">
+              <MailIcon />
+            </span>
             New Message
           </h2>
-          
         </div>
 
         {/* Form */}
@@ -135,7 +147,7 @@ const GmailStyleEmailForm: React.FC = () => {
           </div>
 
           {/* Footer */}
-          <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+          <div className="flex justify-between items-center pt-4 border-t border-gray-200 gap-2">
             {/* Send button */}
             <button
               type="submit"
@@ -146,19 +158,36 @@ const GmailStyleEmailForm: React.FC = () => {
             </button>
 
             {message && (
-              <p className={`text-sm ${messageType === "success" ? "text-green-600" : "text-red-600"}`}>
+              <p
+                className={`text-sm ${
+                  messageType === "success"
+                    ? "text-green-600"
+                    : "text-red-600"
+                }`}
+              >
                 {message}
               </p>
             )}
 
-            {/* Import Excel button */}
-            <button
-              type="button"
-              onClick={() => setShowImport(true)}
-              className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 shadow-md"
-            >
-              Import 
-            </button>
+            {/* Buttons */}
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setShowImport(true)}
+                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 shadow-md"
+              >
+                Import
+              </button>
+
+              {/* 🔥 Show Emails button */}
+              <button
+                type="button"
+                onClick={() => setShowEmails(!showEmails)}
+                className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 shadow-md"
+              >
+                {showEmails ? "Hide Emails" : "Show Emails"}
+              </button>
+            </div>
           </div>
         </form>
       </div>
@@ -171,9 +200,27 @@ const GmailStyleEmailForm: React.FC = () => {
               onClick={() => setShowImport(false)}
               className="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-2xl"
             >
-              <CloseIcon/>
+              <CloseIcon />
             </button>
             <ImportExcel />
+          </div>
+        </div>
+      )}
+
+      {/* 🔥 EmailList Sidebar (unmounted when hidden) */}
+      {showEmails && (
+        <div className="fixed right-2  w-[400px] bg-white z-50 border border-gray-200 rounded-l-2xl shadow-xl m-2">
+          <div className="flex justify-between items-center p-4 border-b">
+            <h3 className="text-lg font-semibold text-gray-700">Unread Emails</h3>
+            <button
+              onClick={() => setShowEmails(false)}
+              className="text-gray-500 hover:text-red-500 text-2xl"
+            >
+              <CloseIcon />
+            </button>
+          </div>
+          <div className="p-4 overflow-y-auto h-[calc(100%-60px)]">
+            <EmailList />
           </div>
         </div>
       )}
